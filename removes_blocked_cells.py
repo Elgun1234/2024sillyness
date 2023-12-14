@@ -99,7 +99,7 @@ class Puzzle():
                     if notallowedsymbols != [""]:
                         location.append((row, column))
             pattern = self.patternfinder(3, 3)
-
+            
             if pattern == []:
                 for row in range(1, self.__GridSize + 1):
                     for column in range(1, self.__GridSize + 1):
@@ -108,7 +108,7 @@ class Puzzle():
                 print("removed all blocked")
             else:
                 remove = self.checkblockedcellinpattern(location, pattern)
-                print(remove)
+                '''print(remove)'''
                 for i in remove:
                     current_cell = self.__GetCell(i[0], i[1])
                     current_cell.resetSymbolsAllowed()
@@ -122,20 +122,17 @@ class Puzzle():
             print("Puzzle not loaded")
             Main()'''
 
-    '''def check_blocked_cells(self,Filename):
-
-        try:
-            with open(Filename) as f:
-                for Count in range(1, self.__GridSize * self.__GridSize + 1):
-                    Items = f.readline().rstrip().split(",")
-
-            for i in (5,1,-1):
-                for k in (1,5):
-                    if self.CheckforMatchWithPattern(i, k) != 10:
-                        Items[1:] = Items'''
 
     def AttemptPuzzle(self):
         Finished = False
+        '''
+        for row in range(1, self.__GridSize + 1):
+            for column in range(1, self.__GridSize + 1):
+                current_cell = self.__GetCell(row, column)
+                notallowedsymbols = current_cell.GetSymbolsNotAllowed()
+
+                if notallowedsymbols != [""]:
+                    print(row,column)'''
         while not Finished:
             self.DisplayPuzzle()
             print("Current score: " + str(self.__Score))
@@ -166,29 +163,30 @@ class Puzzle():
             if self.__SymbolsLeft == 0:
                 Finished = True
 
-        location = []
-        for row in range(1, self.__GridSize + 1):
-            for column in range(1, self.__GridSize + 1):
-                current_cell = self.__GetCell(row, column)
-                notallowedsymbols = current_cell.GetSymbolsNotAllowed()
-
-                if notallowedsymbols != [""]:
-                    location.append((row, column))
-        pattern = self.patternfinder(3, 3)
-
-        if pattern == []:
+            location = []
             for row in range(1, self.__GridSize + 1):
                 for column in range(1, self.__GridSize + 1):
                     current_cell = self.__GetCell(row, column)
+                    notallowedsymbols = current_cell.GetSymbolsNotAllowed()
+    
+                    if notallowedsymbols != [""]:
+                        location.append((row, column))
+            pattern = self.patternfinder(3, 3)
+            #print(location)
+            #print(pattern)
+            if pattern == []:
+                for row in range(1, self.__GridSize + 1):
+                    for column in range(1, self.__GridSize + 1):
+                        current_cell = self.__GetCell(row, column)
+                        current_cell.resetSymbolsAllowed()
+                print("removed all blocked")
+            else:
+                remove = self.checkblockedcellinpattern(location, pattern)
+                #print(remove)
+                for i in remove:
+                    current_cell = self.__GetCell(i[0], i[1])
                     current_cell.resetSymbolsAllowed()
-            print("removed all blocked")
-        else:
-            remove = self.checkblockedcellinpattern(location, pattern)
-            print(remove)
-            for i in remove:
-                current_cell = self.__GetCell(i[0], i[1])
-                current_cell.resetSymbolsAllowed()
-                print("removed extra blocked cells with pattern")
+                    print("removed extra blocked cells with pattern")
 
         print()
         self.DisplayPuzzle()
@@ -205,11 +203,12 @@ class Puzzle():
     def checkblockedcellinpattern(self, location, pattern):  # locatioin of blocks pattern is patten
         notallowedblocked = []
         for i in pattern:
-
+            
             for k in location:
-                print(k)
-                if k[0] >= i[0] or k[0] <= i[0] - 2:
-                    if k[1] <= i[1] or k[1] >= i[1] + 2:
+                
+                if k[0] > i[0] or k[0] < i[0] - 2:
+                    if k[1] < i[1] or k[1] > i[1] + 2:
+                        print(k,i)
                         notallowedblocked.append(k)
         return notallowedblocked
 
@@ -260,7 +259,7 @@ class Puzzle():
                     PatternString += self.__GetCell(StartRow - 1, StartColumn).GetSymbol()
                     PatternString += self.__GetCell(StartRow - 1, StartColumn + 1).GetSymbol()
                     for P in self.__AllowedPatterns:
-                        CurrentSymbol = self.__GetCell(Row, Column).GetSymbol()
+                        CurrentSymbol = self.__GetCell(StartRow, StartColumn).GetSymbol()
                         if P.MatchesPattern(PatternString, CurrentSymbol):
                             self.__GetCell(StartRow, StartColumn).AddToNotAllowedSymbols(CurrentSymbol)
                             self.__GetCell(StartRow, StartColumn + 1).AddToNotAllowedSymbols(CurrentSymbol)
